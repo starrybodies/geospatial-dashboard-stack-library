@@ -1,0 +1,3 @@
+display_name: Geospatial Data Feed Selector
+short_description: Choose authoritative feeds and APIs for geospatial dashboards.
+default_prompt: Recommend geospatial data feeds for a dashboard, including update cadence, access method, license caveats, reliability risks, and production caching strategy.

@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Geospatial Dashboard Tool Library</title>
+  <style>
+    :root {
+      --ink: #141711;
+      --muted: #5f685c;
+      --paper: #f6f3ea;
+      --panel: #fffdf5;
+      --line: #d9d1bf;
+      --field: #ebe4d3;
+      --green: #315f43;
+      --blue: #285b74;
+      --gold: #a36f18;
+      --red: #9e3f31;
+      --shadow: 0 18px 45px rgba(49, 42, 24, .12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(255,255,255,.42) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.36) 1px, transparent 1px),
+        radial-gradient(circle at 18% 8%, rgba(163, 111, 24, .18), transparent 25%),
+        radial-gradient(circle at 82% 10%, rgba(40, 91, 116, .18), transparent 27%),
+        var(--paper);
+      background-size: 34px 34px, 34px 34px, auto, auto;
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    button, input, select { font: inherit; }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 34px 0 46px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr);
+      gap: 30px;
+      align-items: end;
+      border-bottom: 2px solid var(--ink);
+      padding-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 840px;
+      font-size: clamp(2.2rem, 7vw, 5.7rem);
+      line-height: .9;
+      letter-spacing: 0;
+      text-wrap: balance;
+    }
+
+    .lede {
+      margin: 18px 0 0;
+      max-width: 720px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.55;
+    }
+
+    .summary {
+      border: 1px solid var(--line);
+      background: rgba(255, 253, 245, .86);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .summary strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: .86rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--green);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: minmax(220px, 1fr) 190px 190px 190px;
+      gap: 10px;
+      margin: 22px 0;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      padding: 12px;
+      background: rgba(246, 243, 234, .93);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+    }
+
+    .controls input, .controls select {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      padding: 0 12px;
+      border-radius: 0;
+    }
+
+    .stats {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      background: rgba(255, 253, 245, .7);
+      padding: 9px 12px;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .stat b { color: var(--ink); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      min-height: 330px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: 0 8px 20px rgba(49, 42, 24, .08);
+      padding: 16px;
+    }
+
+    .card.hidden { display: none; }
+
+    .card-head {
+      display: flex;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: start;
+      min-height: 72px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 1.42rem;
+      line-height: 1.02;
+      letter-spacing: 0;
+    }
+
+    .tag {
+      white-space: nowrap;
+      border: 1px solid currentColor;
+      padding: 4px 7px;
+      color: var(--green);
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .purpose {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .score-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+    }
+
+    .score {
+      border: 1px solid var(--line);
+      min-height: 58px;
+      padding: 7px;
+      background: #faf7ed;
+    }
+
+    .score span {
+      display: block;
+      color: var(--muted);
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .score b {
+      display: block;
+      margin-top: 4px;
+      color: var(--blue);
+      font-size: 1.25rem;
+    }
+
+    dl {
+      display: grid;
+      grid-template-columns: 82px 1fr;
+      gap: 8px 12px;
+      margin: 0;
+      font-size: .92rem;
+      line-height: 1.35;
+    }
+
+    dt {
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      font-size: .72rem;
+    }
+
+    dd { margin: 0; color: var(--ink); }
+
+    .best-fit {
+      margin-top: auto;
+      padding-top: 13px;
+      border-top: 1px solid var(--line);
+      color: var(--green);
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    .decision {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .bundle {
+      border: 2px solid var(--ink);
+      background: rgba(255, 253, 245, .82);
+      padding: 18px;
+    }
+
+    .bundle h3 {
+      margin: 0 0 10px;
+      font-size: 1.4rem;
+    }
+
+    .bundle p {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .empty {
+      display: none;
+      border: 1px dashed var(--red);
+      padding: 22px;
+      background: rgba(255,255,255,.55);
+      color: var(--red);
+    }
+
+    .empty.show { display: block; }
+
+    @media (max-width: 980px) {
+      header, .decision { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .controls { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .shell { width: min(100% - 20px, 1180px); padding-top: 18px; }
+      .grid, .controls { grid-template-columns: 1fr; }
+      .card { min-height: 0; }
+      .score-row { grid-template-columns: repeat(2, 1fr); }
+      dl { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <h1>Geospatial Dashboard Tool Library</h1>
+        <p class="lede">A searchable working index distilled from the research memo: map engines, analytical layers, platform frameworks, chart companions, and authoritative feeds for open geospatial dashboards.</p>
+      </div>
+      <aside class="summary">
+        <strong>Default stack</strong>
+        MapLibre GL JS for open vector maps, deck.gl for GPU analytical overlays, Apache ECharts for linked charts, and STAC/OGC/PMTiles/TiTiler for durable data delivery.
+      </aside>
+    </header>
+
+    <section class="controls" aria-label="Library filters">
+      <input id="search" type="search" placeholder="Search tools, feeds, strengths, standards..." aria-label="Search library">
+      <select id="category" aria-label="Filter by category"></select>
+      <select id="fit" aria-label="Filter by best fit"></select>
+      <select id="license" aria-label="Filter by license"></select>
+    </section>
+
+    <section class="stats" aria-live="polite">
+      <span class="stat"><b id="visibleCount">0</b> matching entries</span>
+      <span class="stat"><b id="libraryCount">0</b> total entries</span>
+      <span class="stat">Scores: UX / performance / customization / integration</span>
+    </section>
+
+    <p id="empty" class="empty">No matches. Try clearing one filter or searching for a broader term like “traffic”, “catalog”, “3D”, “STAC”, or “boundaries”.</p>
+    <section id="cards" class="grid" aria-label="Search results"></section>
+
+    <section class="decision" aria-label="Recommended starter bundles">
+      <article class="bundle">
+        <h3>Lightweight</h3>
+        <p>MapLibre, ECharts, PMTiles, static hosting, and a thin config API.</p>
+        <strong>Best for:</strong> public dashboards, NGO/policy portals, modest internal tools.
+      </article>
+      <article class="bundle">
+        <h3>Full-featured</h3>
+        <p>MapLibre, deck.gl, ECharts, STAC, OGC APIs, TiTiler, auth, URL state, and CDN caching.</p>
+        <strong>Best for:</strong> analytical dashboards, climate, mobility, infrastructure, monitoring.
+      </article>
+      <article class="bundle">
+        <h3>Enterprise-ready</h3>
+        <p>TerriaMap or MapStore2/GeoNode with governed metadata, roles, saved views, Grafana or Superset.</p>
+        <strong>Best for:</strong> agencies, utilities, digital twins, multi-team publishing workflows.
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const entries = [
+      {name:"MapLibre GL JS", category:"Map engine", purpose:"Open WebGL browser map engine for vector tiles and MapLibre Style Spec rendering.", strengths:"Modern vector-tile styling, active plugin ecosystem, PMTiles/COG/localization/contour integrations.", cautions:"Requires assembling the dashboard shell; advanced 3D analytics usually need companion libraries.", license:"BSD-3-Clause", ux:4, perf:5, custom:5, integration:4, best:"Default 2D map engine for modern open dashboards.", fit:"Custom analytics"},
+      {name:"Leaflet", category:"Map engine", purpose:"Lightweight 2D map library for mobile-friendly interactive maps.", strengths:"Small footprint, simple API, deep plugin ecosystem, accessibility guidance.", cautions:"Not ideal for very large WebGL datasets, 3D, or complex non-Mercator workflows.", license:"BSD-2-Clause", ux:4, perf:3, custom:4, integration:5, best:"Lightweight public maps, embeds, simple GeoJSON/tile dashboards.", fit:"Lightweight"},
+      {name:"OpenLayers", category:"Map engine", purpose:"Feature-rich 2D GIS web mapping framework.", strengths:"Broad source support, strong projections, OGC fit, controls and interactions.", cautions:"Steeper learning curve and larger API surface.", license:"BSD-2-Clause", ux:3, perf:4, custom:5, integration:3, best:"Standards-heavy GIS, projections, editing, advanced 2D interactions.", fit:"Standards GIS"},
+      {name:"CesiumJS", category:"3D engine", purpose:"3D globe and map engine for high-precision geospatial visualization.", strengths:"3D Tiles, CZML, terrain, WGS84 globe, Sandcastle demos.", cautions:"Heavier than 2D stacks; use when 3D is central.", license:"Open source", ux:4, perf:4, custom:4, integration:3, best:"3D globes, terrain, city-scale digital twins, open-format visualization.", fit:"3D digital twins"},
+      {name:"deck.gl", category:"Analytical layer", purpose:"GPU-powered framework for exploratory visualization of very large datasets.", strengths:"Million-scale rendering, custom layers/shaders, TypeScript, MapLibre pairing.", cautions:"Lower-level than kepler.gl; needs state and UI composition around it.", license:"MIT", ux:4, perf:5, custom:5, integration:3, best:"Dense analytical overlays, trajectories, aggregation, custom interaction logic.", fit:"Custom analytics"},
+      {name:"kepler.gl", category:"Analytical app", purpose:"Opinionated geospatial analytics framework and end-user app for large-scale data exploration.", strengths:"Excellent out-of-box UX, filters, split maps, 2D/3D, MapLibre/deck.gl base.", cautions:"Opinionated UI; deep customization is less natural than low-level assembly.", license:"MIT", ux:5, perf:4, custom:3, integration:4, best:"Rapid analyst workflows, stakeholder demos, embedded exploratory modules.", fit:"Analyst exploration"},
+      {name:"TerriaJS / TerriaMap", category:"Platform framework", purpose:"Rich catalog-driven geospatial applications and digital twins.", strengths:"Catalog/workbench model, 2D/3D, live-data orientation, URL state, portal UX.", cautions:"Opinionated application model; heavier than a minimal custom app.", license:"Apache-2.0", ux:5, perf:4, custom:4, integration:3, best:"Catalog workbenches, saved map state, policy portals, digital twins.", fit:"Catalog portal"},
+      {name:"Apache ECharts", category:"Charting", purpose:"General-purpose dashboard charting library for linked analytical panels.", strengths:"20+ chart types, Canvas/SVG, progressive rendering, stream loading.", cautions:"Not a map engine; use around the map rather than as the map core.", license:"Apache-2.0", ux:4, perf:4, custom:4, integration:4, best:"Linked KPIs, brushing, summaries, and non-map analytics beside maps.", fit:"Custom analytics"},
+      {name:"NASA Worldview", category:"Reference app", purpose:"Public temporal earth-observation dashboard and scientific imagery browser.", strengths:"Dense layer catalog, time browsing, polar/geostationary views, shareable state.", cautions:"Best as a reference implementation, not a generic starter kit.", license:"Open source", ux:5, perf:4, custom:3, integration:3, best:"Reference UX for imagery catalogs, temporal browsing, and global science layers.", fit:"EO imagery"},
+      {name:"MapStore2", category:"Platform framework", purpose:"Open WebGIS application framework for maps, dashboards, stories, and OGC interoperability.", strengths:"React/Redux frontend, Java backend, maps, dashboards, timelines, permissions.", cautions:"Heavier platform footprint and backend requirements.", license:"Open source", ux:4, perf:4, custom:4, integration:3, best:"WebGIS portals needing dashboards, stories, OGC, permissions.", fit:"Enterprise portal"},
+      {name:"GeoNode", category:"Platform framework", purpose:"Open-source geospatial CMS and SDI foundation.", strengths:"Django, GeoServer, pyCSW, metadata, publishing, permissions, dashboards, GeoStories.", cautions:"Platform commitment; not just a frontend library.", license:"Open source", ux:4, perf:3, custom:4, integration:3, best:"Metadata, content publishing, permissions, SDI workflows.", fit:"Enterprise portal"},
+      {name:"Grafana Geomap", category:"Operational dashboard", purpose:"Operational geospatial panel inside Grafana OSS.", strengths:"Auto-refresh, observability data sources, layered maps, heatmaps, networks, keyboard map navigation.", cautions:"Best when data already lives in operational/time-series systems.", license:"Open source", ux:4, perf:4, custom:3, integration:5, best:"Real-time telemetry and operations dashboards.", fit:"Operations"},
+      {name:"Apache Superset", category:"BI platform", purpose:"Open-source BI companion with SQL, semantic metrics, and geospatial visualizations.", strengths:"SQL editor, semantic layer, caching, security roles, APIs, no-code chart builder.", cautions:"Geospatial features are part of a broader BI platform.", license:"Apache-2.0", ux:4, perf:4, custom:3, integration:4, best:"BI-style slicing around geospatial dashboards.", fit:"BI companion"},
+      {name:"NASA GIBS", category:"Data feed", purpose:"Satellite browse imagery for hazards, atmosphere, ocean, cryosphere, and land.", strengths:"Near-real-time products, daily full-globe imagery, WMTS/WMS/TMS/XYZ delivery.", cautions:"Optimized for browse visualization, not raw-scene analytics.", license:"Free public", ux:4, perf:4, custom:3, integration:4, best:"Responsive temporal imagery overlays.", fit:"EO imagery"},
+      {name:"Copernicus Data Space", category:"Data feed", purpose:"Sentinel archives and broader Copernicus ecosystem data.", strengths:"STAC, OData, S3, Sentinel Hub, openEO pathways.", cautions:"Workflow terms and service choice affect implementation complexity.", license:"Free/open ecosystem", ux:3, perf:4, custom:4, integration:4, best:"Primary EO discovery and API-driven Sentinel workflows.", fit:"EO imagery"},
+      {name:"USGS Landsat Collection 2", category:"Data feed", purpose:"Long time-series multispectral archive with improved geolocation and cloud access.", strengths:"Historical continuity across decades, public access, STAC-oriented ecosystems.", cautions:"Scene analytics pipeline needed for custom derived products.", license:"Free public", ux:3, perf:4, custom:4, integration:3, best:"Longitudinal remote sensing and historical baseline analysis.", fit:"EO imagery"},
+      {name:"USGS 3DEP", category:"Data feed", purpose:"U.S. elevation products through The National Map.", strengths:"Authoritative U.S. elevation, TNMAccess API and downloads.", cautions:"U.S.-focused rather than global.", license:"Free public", ux:3, perf:3, custom:3, integration:3, best:"U.S. terrain and elevation baselines.", fit:"Terrain"},
+      {name:"Copernicus DEM", category:"Data feed", purpose:"Global DEM products including GLO-30 and GLO-90.", strengths:"Official European program source, global coverage.", cautions:"Versioned data, not a streaming feed.", license:"Copernicus terms", ux:3, perf:3, custom:3, integration:3, best:"Global elevation layers.", fit:"Terrain"},
+      {name:"ESA WorldCover", category:"Data feed", purpose:"Global 10 m land-cover maps.", strengths:"CC BY 4.0, free, convenient categorical baseline layer.", cautions:"Versioned annual releases rather than live data.", license:"CC BY 4.0", ux:4, perf:4, custom:3, integration:4, best:"Authoritative open categorical land-cover baseline.", fit:"Land cover"},
+      {name:"Dynamic World", category:"Data feed", purpose:"Near-real-time global 10 m land-use/land-cover predictions from Sentinel-2.", strengths:"Probabilistic near-real-time land cover tied to Sentinel-2 revisit.", cautions:"Model product, not legal land-use authority.", license:"Open; verify downstream terms", ux:4, perf:4, custom:4, integration:3, best:"Rapid land-cover change and monitoring layers.", fit:"Land cover"},
+      {name:"OpenStreetMap / Overpass", category:"Data feed", purpose:"Global community map database for roads, amenities, POIs, and surface context.", strengths:"Broad coverage, minutely/hourly/daily diffs, Overpass queries, planet files.", cautions:"Public Overpass is not a production backend; self-host or cache at scale.", license:"ODbL", ux:4, perf:3, custom:5, integration:4, best:"Open contextual basemap, POIs, roads, amenities.", fit:"Context data"},
+      {name:"Overture Maps", category:"Data feed", purpose:"Global places, divisions, transportation, buildings, and addresses.", strengths:"Monthly cloud-native GeoParquet releases and consistent schemas.", cautions:"Source-specific licensing exceptions require review.", license:"Mostly CDLA Permissive v2", ux:3, perf:4, custom:4, integration:4, best:"Cloud-native place/context layers and schema-consistent open data.", fit:"Context data"},
+      {name:"USDOT WZDx", category:"Data feed", purpose:"Harmonized work-zone and road-restriction feeds from agencies.", strengths:"Open JSON spec and feed registry.", cautions:"Publisher-dependent freshness and licensing.", license:"Varies by feed", ux:3, perf:4, custom:3, integration:3, best:"U.S. work zones and road operations.", fit:"Traffic"},
+      {name:"TomTom Traffic API", category:"Commercial feed", purpose:"Real-time traffic flow and incident content for maps and routing.", strengths:"Minute-level flow updates, REST and tile APIs, global commercial coverage.", cautions:"Commercial terms and pricing should be reconfirmed during procurement.", license:"Commercial", ux:4, perf:5, custom:3, integration:4, best:"Reliable live traffic overlays.", fit:"Traffic"},
+      {name:"HERE Traffic API", category:"Commercial feed", purpose:"Real-time traffic flow and incidents.", strengths:"Enterprise traffic API, quotas/SLA posture, ecosystem fit.", cautions:"Commercial pay-as-you-grow plans; verify current terms.", license:"Commercial", ux:4, perf:5, custom:3, integration:4, best:"Enterprise real-time traffic and incidents.", fit:"Traffic"},
+      {name:"NOAA NWS API", category:"Data feed", purpose:"Forecasts, alerts, observations, and operational U.S. weather data.", strengths:"JSON-LD REST API, authoritative U.S. weather.", cautions:"U.S.-centric by mandate.", license:"Free public", ux:4, perf:4, custom:3, integration:5, best:"U.S. weather operations dashboards.", fit:"Weather"},
+      {name:"ECMWF Open Data", category:"Data feed", purpose:"Global model outputs from IFS and AIFS.", strengths:"Four forecast runs per day, open catalogue, cloud mirrors.", cautions:"Model-data handling pipeline required.", license:"CC BY 4.0", ux:3, perf:4, custom:4, integration:3, best:"High-confidence global forecast model layers.", fit:"Weather"},
+      {name:"geoBoundaries", category:"Data feed", purpose:"Standardized global administrative boundaries with API access.", strengths:"CC BY 4.0, global standardized boundaries.", cautions:"API uptime encouraged but not guaranteed.", license:"CC BY 4.0", ux:3, perf:3, custom:3, integration:4, best:"Open global admin boundaries.", fit:"Boundaries"},
+      {name:"Natural Earth", category:"Data feed", purpose:"Small-scale global physical and cultural data.", strengths:"Public domain, excellent low-zoom cartographic context.", cautions:"Not a legal boundary authority.", license:"Public domain", ux:4, perf:5, custom:3, integration:5, best:"Low-zoom cartographic basemap context.", fit:"Boundaries"},
+      {name:"TIGER/Line", category:"Data feed", purpose:"U.S. legal/statistical boundaries, roads, hydrography, and census geography.", strengths:"Annual authoritative U.S. Census geography.", cautions:"U.S.-only and not optimized for cartographic cleanliness.", license:"Free public", ux:3, perf:3, custom:3, integration:3, best:"U.S. legal/statistical geography.", fit:"Boundaries"}
+    ];
+
+    const $ = (id) => document.getElementById(id);
+    const cards = $("cards");
+    const search = $("search");
+    const category = $("category");
+    const fit = $("fit");
+    const license = $("license");
+    const empty = $("empty");
+
+    function optionsFor(key, label) {
+      const values = [...new Set(entries.map((entry) => entry[key]))].sort();
+      return [`<option value="">${label}</option>`, ...values.map((value) => `<option>${value}</option>`)].join("");
+    }
+
+    category.innerHTML = optionsFor("category", "All categories");
+    fit.innerHTML = optionsFor("fit", "All best fits");
+    license.innerHTML = optionsFor("license", "All licenses");
+    $("libraryCount").textContent = entries.length;
+
+    function render() {
+      const q = search.value.trim().toLowerCase();
+      const selectedCategory = category.value;
+      const selectedFit = fit.value;
+      const selectedLicense = license.value;
+
+      const filtered = entries.filter((entry) => {
+        const haystack = Object.values(entry).join(" ").toLowerCase();
+        return (!q || haystack.includes(q))
+          && (!selectedCategory || entry.category === selectedCategory)
+          && (!selectedFit || entry.fit === selectedFit)
+          && (!selectedLicense || entry.license === selectedLicense);
+      });
+
+      $("visibleCount").textContent = filtered.length;
+      empty.classList.toggle("show", filtered.length === 0);
+      cards.innerHTML = filtered.map((entry) => `
+        <article class="card">
+          <div class="card-head">
+            <h2>${entry.name}</h2>
+            <span class="tag">${entry.category}</span>
+          </div>
+          <p class="purpose">${entry.purpose}</p>
+          <div class="score-row" aria-label="Evaluation scores">
+            <div class="score"><span>UX</span><b>${entry.ux}</b></div>
+            <div class="score"><span>Perf</span><b>${entry.perf}</b></div>
+            <div class="score"><span>Custom</span><b>${entry.custom}</b></div>
+            <div class="score"><span>Integr.</span><b>${entry.integration}</b></div>
+          </div>
+          <dl>
+            <dt>Strengths</dt><dd>${entry.strengths}</dd>
+            <dt>Cautions</dt><dd>${entry.cautions}</dd>
+            <dt>License</dt><dd>${entry.license}</dd>
+          </dl>
+          <div class="best-fit">${entry.best}</div>
+        </article>
+      `).join("");
+    }
+
+    [search, category, fit, license].forEach((control) => control.addEventListener("input", render));
+    render();
+  </script>
+</body>
+</html>

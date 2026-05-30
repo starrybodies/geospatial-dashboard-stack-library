@@ -1,0 +1,3 @@
+display_name: Geospatial Dashboard Architect
+short_description: Choose open geospatial dashboard stacks and delivery patterns.
+default_prompt: Design a geospatial dashboard architecture from requirements, recommending libraries, standards, data delivery, UX patterns, and a delivery bundle.
