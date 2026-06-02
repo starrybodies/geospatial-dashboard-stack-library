@@ -6,17 +6,18 @@
   <title>Geospatial Dashboard Tool Library</title>
   <style>
     :root {
-      --ink: #141711;
-      --muted: #5f685c;
-      --paper: #f6f3ea;
-      --panel: #fffdf5;
-      --line: #d9d1bf;
-      --field: #ebe4d3;
-      --green: #315f43;
-      --blue: #285b74;
-      --gold: #a36f18;
-      --red: #9e3f31;
-      --shadow: 0 18px 45px rgba(49, 42, 24, .12);
+      --ink: #d7f6d3;
+      --muted: #7d9b80;
+      --paper: #030806;
+      --panel: rgba(8, 20, 13, .82);
+      --panel-strong: rgba(12, 31, 19, .94);
+      --line: rgba(124, 255, 135, .18);
+      --field: rgba(4, 14, 8, .9);
+      --green: #7cff87;
+      --blue: #76e4c8;
+      --gold: #f2c15a;
+      --red: #ff7f6f;
+      --shadow: 0 22px 70px rgba(0, 0, 0, .45);
     }
 
     * { box-sizing: border-box; }
@@ -25,13 +26,27 @@
       margin: 0;
       color: var(--ink);
       background:
-        linear-gradient(rgba(255,255,255,.42) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.36) 1px, transparent 1px),
-        radial-gradient(circle at 18% 8%, rgba(163, 111, 24, .18), transparent 25%),
-        radial-gradient(circle at 82% 10%, rgba(40, 91, 116, .18), transparent 27%),
+        linear-gradient(rgba(124, 255, 135, .045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124, 255, 135, .035) 1px, transparent 1px),
+        radial-gradient(circle at 17% 8%, rgba(124, 255, 135, .16), transparent 28%),
+        radial-gradient(circle at 76% 2%, rgba(118, 228, 200, .13), transparent 30%),
+        radial-gradient(circle at 86% 62%, rgba(242, 193, 90, .11), transparent 32%),
+        linear-gradient(180deg, rgba(3, 8, 6, .35), rgba(3, 8, 6, 1) 68%),
         var(--paper);
-      background-size: 34px 34px, 34px 34px, auto, auto;
-      font-family: Georgia, "Times New Roman", serif;
+      background-size: 40px 40px, 40px 40px, auto, auto, auto, auto;
+      font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(124,255,135,.04), transparent 12%, transparent 88%, rgba(124,255,135,.04)),
+        repeating-linear-gradient(0deg, rgba(255,255,255,.018), rgba(255,255,255,.018) 1px, transparent 1px, transparent 6px);
+      mix-blend-mode: screen;
+      opacity: .55;
     }
 
     button, input, select { font: inherit; }
@@ -39,7 +54,7 @@
     .shell {
       width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
-      padding: 34px 0 46px;
+      padding: 28px 0 52px;
     }
 
     header {
@@ -47,15 +62,37 @@
       grid-template-columns: minmax(0, 1.2fr) minmax(260px, .8fr);
       gap: 30px;
       align-items: end;
-      border-bottom: 2px solid var(--ink);
-      padding-bottom: 24px;
+      border-bottom: 1px solid var(--line);
+      padding: 22px 0 26px;
+    }
+
+    .brandline {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+      color: var(--green);
+      font-size: .78rem;
+      text-transform: uppercase;
+    }
+
+    .brandline::before {
+      content: "G";
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border: 1px solid rgba(124, 255, 135, .42);
+      background: rgba(124, 255, 135, .08);
+      color: var(--ink);
+      box-shadow: 0 0 22px rgba(124, 255, 135, .24);
     }
 
     h1 {
       margin: 0;
       max-width: 840px;
-      font-size: clamp(2.2rem, 7vw, 5.7rem);
-      line-height: .9;
+      font-size: clamp(2.1rem, 6vw, 5rem);
+      line-height: .96;
       letter-spacing: 0;
       text-wrap: balance;
     }
@@ -70,9 +107,22 @@
 
     .summary {
       border: 1px solid var(--line);
-      background: rgba(255, 253, 245, .86);
+      background: linear-gradient(180deg, rgba(12, 31, 19, .9), rgba(4, 14, 8, .86));
       box-shadow: var(--shadow);
       padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .summary::after {
+      content: "SOURCE: OPEN DATA  UPDATED: LIVE";
+      display: block;
+      margin-top: 18px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      color: var(--gold);
+      font-size: .72rem;
+      line-height: 1.45;
     }
 
     .summary strong {
@@ -93,19 +143,25 @@
       top: 0;
       z-index: 5;
       padding: 12px;
-      background: rgba(246, 243, 234, .93);
+      background: rgba(3, 8, 6, .88);
       border: 1px solid var(--line);
       backdrop-filter: blur(10px);
+      box-shadow: 0 18px 55px rgba(0, 0, 0, .35);
     }
 
     .controls input, .controls select {
       width: 100%;
       min-height: 44px;
       border: 1px solid var(--line);
-      background: var(--panel);
+      background: var(--field);
       color: var(--ink);
       padding: 0 12px;
       border-radius: 0;
+    }
+
+    .controls input:focus, .controls select:focus {
+      outline: 1px solid rgba(124, 255, 135, .62);
+      box-shadow: 0 0 0 4px rgba(124, 255, 135, .08);
     }
 
     .stats {
@@ -117,13 +173,13 @@
 
     .stat {
       border: 1px solid var(--line);
-      background: rgba(255, 253, 245, .7);
+      background: rgba(8, 20, 13, .72);
       padding: 9px 12px;
       color: var(--muted);
       font-size: .9rem;
     }
 
-    .stat b { color: var(--ink); }
+    .stat b { color: var(--green); }
 
     .grid {
       display: grid;
@@ -138,8 +194,15 @@
       gap: 14px;
       border: 1px solid var(--line);
       background: var(--panel);
-      box-shadow: 0 8px 20px rgba(49, 42, 24, .08);
+      box-shadow: 0 10px 36px rgba(0, 0, 0, .22);
       padding: 16px;
+      transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+    }
+
+    .card:hover {
+      border-color: rgba(124, 255, 135, .42);
+      transform: translateY(-2px);
+      box-shadow: 0 18px 54px rgba(0, 0, 0, .38), 0 0 32px rgba(124, 255, 135, .08);
     }
 
     .card.hidden { display: none; }
@@ -157,6 +220,7 @@
       font-size: 1.42rem;
       line-height: 1.02;
       letter-spacing: 0;
+      color: var(--ink);
     }
 
     .tag {
@@ -164,6 +228,7 @@
       border: 1px solid currentColor;
       padding: 4px 7px;
       color: var(--green);
+      background: rgba(124, 255, 135, .08);
       font-size: .72rem;
       text-transform: uppercase;
       letter-spacing: .08em;
@@ -185,7 +250,7 @@
       border: 1px solid var(--line);
       min-height: 58px;
       padding: 7px;
-      background: #faf7ed;
+      background: rgba(3, 8, 6, .64);
     }
 
     .score span {
@@ -199,7 +264,7 @@
     .score b {
       display: block;
       margin-top: 4px;
-      color: var(--blue);
+      color: var(--green);
       font-size: 1.25rem;
     }
 
@@ -246,14 +311,15 @@
     }
 
     .bundle {
-      border: 2px solid var(--ink);
-      background: rgba(255, 253, 245, .82);
+      border: 1px solid rgba(242, 193, 90, .32);
+      background: linear-gradient(180deg, rgba(21, 31, 17, .88), rgba(4, 14, 8, .82));
       padding: 18px;
     }
 
     .bundle h3 {
       margin: 0 0 10px;
       font-size: 1.4rem;
+      color: var(--gold);
     }
 
     .bundle p {
@@ -266,7 +332,7 @@
       display: none;
       border: 1px dashed var(--red);
       padding: 22px;
-      background: rgba(255,255,255,.55);
+      background: rgba(255,127,111,.08);
       color: var(--red);
     }
 
@@ -291,12 +357,13 @@
   <main class="shell">
     <header>
       <div>
+        <div class="brandline">Living data stack · searchable intelligence</div>
         <h1>Geospatial Dashboard Tool Library</h1>
-        <p class="lede">A searchable working index distilled from the research memo: map engines, analytical layers, platform frameworks, chart companions, and authoritative feeds for open geospatial dashboards.</p>
+        <p class="lede">A searchable intelligence layer for open geospatial dashboards: map engines, analytical overlays, platform frameworks, chart companions, and authoritative feeds for ecological monitoring.</p>
       </div>
       <aside class="summary">
-        <strong>Default stack</strong>
-        MapLibre GL JS for open vector maps, deck.gl for GPU analytical overlays, Apache ECharts for linked charts, and STAC/OGC/PMTiles/TiTiler for durable data delivery.
+        <strong>Default agent stack</strong>
+        MapLibre GL JS for open vector maps, deck.gl for GPU analytical overlays, Apache ECharts for linked charts, and STAC/OGC/PMTiles/TiTiler for verifiable data delivery.
       </aside>
     </header>
 
