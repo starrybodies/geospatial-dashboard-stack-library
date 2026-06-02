@@ -35,6 +35,24 @@ Use this skill to recommend data feeds, APIs, update cadences, access patterns, 
 - Global administrative boundaries: geoBoundaries.
 - Low-zoom cartographic context: Natural Earth.
 - U.S. legal/statistical geography: U.S. Census TIGER/Line.
+- NASA Earth science discovery: NASA Earthdata CMR.
+- Active fire and thermal anomalies: NASA FIRMS.
+- Cloud-native open EO catalogs: Microsoft Planetary Computer or AWS Registry of Open Data.
+- Historical climate observations: NOAA Climate Data Online.
+- Coastal observations and hazards: NOAA nowCOAST.
+- U.S. flood hazards: FEMA National Flood Hazard Layer.
+- U.S. hydrography: USGS 3DHP / NHD.
+- U.S. protected lands: USGS PAD-US.
+- Environmental facility and compliance context: EPA Envirofacts / DMAP.
+- Global air quality: OpenAQ.
+- Biodiversity occurrences: GBIF.
+- Ocean bathymetry: GEBCO.
+- Global hydrologic basins and river networks: HydroSHEDS.
+- Population and settlement: WorldPop and JRC GHSL.
+- Humanitarian crisis data: Humanitarian Data Exchange.
+- Transit schedules and realtime feeds: GTFS Schedule / Realtime.
+- Open address context: OpenAddresses.
+- U.S. federal geospatial discovery: GeoPlatform NGDA STAC.
 
 ## Production Rules
 
